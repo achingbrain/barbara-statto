@@ -1,0 +1,16 @@
+{
+	"registry": {
+		"name": "brewbot",
+		"service": "brewbot-registry-rest",
+		"version": "1.0.0"
+	},
+	"rest": {
+		"name": "brewbot-statto-rest",
+		"version": "1.0.0",
+		"resources": "./resources"
+	},
+	"couchdb": {
+		"host": "localhost",
+		"port": 5984
+	}
+}
