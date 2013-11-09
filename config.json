@@ -1,11 +1,11 @@
 {
 	"registry": {
-		"name": "brewbot",
-		"service": "brewbot-registry-rest",
+		"name": "barbara",
+		"service": "barbara-registry-rest",
 		"version": "1.0.0"
 	},
 	"rest": {
-		"name": "brewbot-statto-rest",
+		"name": "barbara-statto-rest",
 		"version": "1.0.0",
 		"resources": "./resources"
 	},
