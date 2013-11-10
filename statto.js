@@ -31,17 +31,15 @@ container.createAndRegister("columbo", Columbo, {
 	}
 });
 
+// inject a dummy seaport - we'll overwrite this when the real one becomes available
+container.register("seaport", {
+	query: function() {
+		return [];
+	}
+});
+
 var bonvoyageClient = new bonvoyage.Client({
 	serviceType: nconf.get("registry:name")
-});
-bonvoyageClient.find(function(error, seaport) {
-	if(error) {
-		LOG.error("Could not find SeaPort", error);
-
-		return;
-	}
-
-	container.register("seaport", seaport);
 });
 bonvoyageClient.register({
 	role: nconf.get("rest:name"),
@@ -56,4 +54,16 @@ bonvoyageClient.register({
 
 		LOG.info("RESTServer", "Running at", "http://localhost:" + port);
 	}
+});
+bonvoyageClient.find(function(error, seaport) {
+	if(error) {
+		LOG.error("Error finding seaport", error);
+
+		return;
+	}
+
+	LOG.info("Found seaport server");
+});
+bonvoyageClient.on("seaportUp", function(seaport) {
+	container.register("seaport", seaport);
 });

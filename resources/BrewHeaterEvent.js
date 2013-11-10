@@ -1,46 +1,46 @@
 var LOG = require("winston"),
 	Autowire = require("wantsit").Autowire;
 
-BrewTemperature = function() {
+BrewHeaterEvent = function() {
 	this._brewRepository = Autowire;
 };
 
-BrewTemperature.prototype.retrieveAll = function(request) {
+BrewHeaterEvent.prototype.retrieveAll = function(request) {
 	this._findBrew(request.params.brewId, request, function(brew) {
-		if(!brew.temperatures) {
-			LOG.error("Brew had no recorded temperatures", request.params.brewId);
+		if(!brew.heaterEvents) {
+			LOG.error("Brew had no recorded heating events", request.params.brewId);
 
 			request.code(404);
 
 			return;
 		}
 
-		request.reply(brew.temperatures);
+		request.reply(brew.heaterEvents);
 	});
 };
 
-BrewTemperature.prototype.create = function(request) {
+BrewHeaterEvent.prototype.create = function(request) {
 	this._findBrew(request.params.brewId, request, function(brew) {
-		var celsius = request.payload.celsius;
-		celsius = parseFloat((celsius).toFixed(4));
+		var event = "" + request.payload.event;
+		event = event.toUpperCase() == "ON" ? "ON" : "OFF";
 
-		if(!brew.temperatures) {
-			brew.temperatures = [];
+		if(!brew.heaterEvents) {
+			brew.heaterEvents = [];
 		}
 
-		brew.temperatures.push({
+		brew.heaterEvents.push({
 			date: new Date(),
-			celsius: celsius
+			event: event
 		});
 
 		// persist the new temperature
 		this._brewRepository.save(brew);
 
-		request.reply({celsius: celsius});
+		request.reply({event: event});
 	}.bind(this));
 };
 
-BrewTemperature.prototype._findBrew = function(id, request, callback) {
+BrewHeaterEvent.prototype._findBrew = function(id, request, callback) {
 	this._brewRepository.findById(request.params.brewId, function(error, brew) {
 		if(error) {
 			LOG.error("Could not find brew with id", request.params.brewId);
@@ -54,4 +54,4 @@ BrewTemperature.prototype._findBrew = function(id, request, callback) {
 	});
 }
 
-module.exports = BrewTemperature;
+module.exports = BrewHeaterEvent;
