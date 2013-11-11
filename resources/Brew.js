@@ -14,6 +14,12 @@ Brews.prototype.retrieve = function(request) {
 Brews.prototype.retrieveAll = function(request) {
 	if(request.query.name) {
 		this._brewRepository.findByName(request.query.name, function(error, brew) {
+			if(!brew) {
+				request.reply({}).code(404);
+
+				return;
+			}
+
 			request.reply(brew);
 		});
 	} else {

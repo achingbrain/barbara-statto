@@ -70,7 +70,7 @@ BrewRepository.prototype.findById = function(id, callback) {
 
 BrewRepository.prototype.findByName = function(name, callback) {
 	this.brewsDb.view("brews", "by_name", { key: name }, function(error, result) {
-		callback(error, error ? null : result.rows[0]);
+		callback(error, error && result.total_rows > 0 ? null : result.rows[0]);
 	});
 };
 
