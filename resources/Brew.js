@@ -12,9 +12,15 @@ Brews.prototype.retrieve = function(request) {
 };
 
 Brews.prototype.retrieveAll = function(request) {
-	this._brewRepository.findAll(function(error, brews) {
-		request.reply(brews);
-	});
+	if(request.query.name) {
+		this._brewRepository.findByName(request.query.name, function(error, brew) {
+			request.reply(brew);
+		});
+	} else {
+		this._brewRepository.findAll(function(error, brews) {
+			request.reply(brews);
+		});
+	}
 };
 
 Brews.prototype.create = function(request) {
