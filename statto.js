@@ -4,10 +4,11 @@ var nconf = require("nconf"),
 	Nano = require("nano"),
 	Columbo = require("columbo"),
 	Hapi = require("hapi"),
-	LOG = require("winston");
+	LOG = require("winston"),
+	path = require("path");
 
 // set up arguments
-nconf.argv().env().file("config.json");
+nconf.argv().env().file(path.resolve(__dirname, "config.json"));
 
 var container = new Container();
 container.register("config", nconf);
@@ -25,7 +26,7 @@ container.createAndRegister("brewRepository", require("./repositories/BrewReposi
 
 // create a REST api
 container.createAndRegister("columbo", Columbo, {
-	resourceDirectory: nconf.get("rest:resources"),
+	resourceDirectory: path.resolve(__dirname, nconf.get("rest:resources")),
 	resourceCreator: function(resource, name) {
 		return container.createAndRegister(name + "Resource", resource);
 	}
