@@ -1,14 +1,14 @@
-var LOG = require("winston"),
-	Autowire = require("wantsit").Autowire;
+var Autowire = require("wantsit").Autowire;
 
 BrewHeaterEvent = function() {
 	this._brewRepository = Autowire;
+	this._logger = Autowire
 };
 
 BrewHeaterEvent.prototype.retrieveAll = function(request) {
 	this._findBrew(request.params.brewId, request, function(brew) {
 		if(!brew.heaterEvents) {
-			LOG.error("Brew had no recorded heating events", request.params.brewId);
+			this._logger.error("Brew had no recorded heating events", request.params.brewId);
 
 			request.code(404);
 
@@ -16,7 +16,7 @@ BrewHeaterEvent.prototype.retrieveAll = function(request) {
 		}
 
 		request.reply(brew.heaterEvents);
-	});
+	}.bind(this));
 };
 
 BrewHeaterEvent.prototype.create = function(request) {
@@ -43,7 +43,7 @@ BrewHeaterEvent.prototype.create = function(request) {
 BrewHeaterEvent.prototype._findBrew = function(id, request, callback) {
 	this._brewRepository.findById(request.params.brewId, function(error, brew) {
 		if(error) {
-			LOG.error("Could not find brew with id", request.params.brewId);
+			this._logger.error("Could not find brew with id", request.params.brewId);
 
 			request.code(404);
 
@@ -51,7 +51,7 @@ BrewHeaterEvent.prototype._findBrew = function(id, request, callback) {
 		}
 
 		callback(brew);
-	});
+	}.bind(this));
 }
 
 module.exports = BrewHeaterEvent;

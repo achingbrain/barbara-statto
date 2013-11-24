@@ -1,5 +1,4 @@
-var LOG = require("winston"),
-	Autowire = require("wantsit").Autowire;
+var Autowire = require("wantsit").Autowire;
 
 Brews = function() {
 	this._brewRepository = Autowire;
@@ -27,22 +26,6 @@ Brews.prototype.retrieveAll = function(request) {
 			request.reply(brews);
 		});
 	}
-};
-
-Brews.prototype.create = function(request) {
-	request.reply({});
-};
-
-Brews.prototype.update = function(request) {
-	request.reply({});
-};
-
-Brews.prototype.patch = function(request) {
-	request.reply({});
-};
-
-Brews.prototype.remove = function(request) {
-	request.reply({});
 };
 
 module.exports = Brews;

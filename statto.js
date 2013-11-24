@@ -4,7 +4,7 @@ var nconf = require("nconf"),
 	Nano = require("nano"),
 	Columbo = require("columbo"),
 	Hapi = require("hapi"),
-	LOG = require("winston"),
+	winston = require("winston"),
 	path = require("path");
 
 // set up arguments
@@ -12,6 +12,16 @@ nconf.argv().env().file(path.resolve(__dirname, "config.json"));
 
 var container = new Container();
 container.register("config", nconf);
+
+// set up logging
+container.createAndRegister("logger", winston.Logger, {
+	transports: [
+		new (winston.transports.Console)({
+			timestamp: true,
+			colorize: true
+		})
+	]
+});
 
 // database
 var connection = new Nano("http://" + nconf.get("couchdb:host") + ":" + nconf.get("couchdb:port"));
@@ -53,17 +63,17 @@ bonvoyageClient.register({
 		server.addRoutes(columbo.discover());
 		server.start();
 
-		LOG.info("RESTServer", "Running at", "http://localhost:" + port);
+		container.find("logger").info("RESTServer", "Running at", "http://localhost:" + port);
 	}
 });
 bonvoyageClient.find(function(error, seaport) {
 	if(error) {
-		LOG.error("Error finding seaport", error);
+		container.find("logger").error("Error finding seaport", error);
 
 		return;
 	}
 
-	LOG.info("Found seaport server");
+	container.find("logger").info("Found seaport server");
 });
 bonvoyageClient.on("seaportUp", function(seaport) {
 	container.register("seaport", seaport);
